@@ -6,7 +6,7 @@
 
 #include "Matrix4.h"
 #include "Mesh.h"
-
+#include "Shader.h"
 
 /*
     应用层
@@ -39,8 +39,8 @@ public:
     void begin();
 private:
 
-    static char *loadFile(const char *filename);
-    static GLuint loadShader( GLenum type, const char *source);
+//    static char *loadFile(const char *filename);
+//    static GLuint loadShader( GLenum type, const char *source);
 
 
 private:
@@ -57,6 +57,8 @@ private:
     
     char *vertexSource;
     char *fragmentSource;
+
+    Shader shader;
 
 };
 

@@ -12,7 +12,7 @@ LDFLAGS = -L../t507_gpu/lib
 LIBS = -lEGL -lGLESv2
 
 
-SRCS = main.cpp GLRenderer.cpp Matrix4.cpp Sprite.cpp Mesh.cpp EGLManager.cpp
+SRCS = main.cpp GLRenderer.cpp Matrix4.cpp Sprite.cpp Mesh.cpp EGLManager.cpp Shader.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
