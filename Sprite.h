@@ -3,6 +3,25 @@
 
 #include "Matrix4.h"
 
+
+/*
+    应用层
+      |
+   Sprite
+      |
+   Mesh
+      |
+ GLRenderer
+      |
+ OpenGL ES
+      |
+ EGLManager
+      |
+Linux Display
+*/
+
+// 负责“这个东西在哪里、大小多少”，是一个会移动、旋转、缩放的对象。
+
 class Sprite    // 精灵(物体)
 {
 public:

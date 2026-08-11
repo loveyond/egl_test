@@ -10,6 +10,7 @@
 #include "Matrix4.h"
 #include "Sprite.h"
 #include "Mesh.h"
+#include "EGLManager.h"
 
 /*
     流程：程序  -> EGLDisplay -> libEGL.so -> Mali GPU驱动 -> /dev/fb0 -> lcd
@@ -23,7 +24,7 @@
 
 */
 
-EGLint attribs[] =
+static EGLint attribs[] =
 {
     EGL_SURFACE_TYPE, EGL_WINDOW_BIT,           // 创建 窗口Surface
 
@@ -36,7 +37,7 @@ EGLint attribs[] =
     EGL_NONE
 };
 
-EGLint contextAttribs[] =
+static EGLint contextAttribs[] =
 {
     EGL_CONTEXT_CLIENT_VERSION,         // OpenGL ES 2.0
     2,
@@ -59,6 +60,7 @@ float vertices[] =
 
 int main()
 {
+/*
     printf("EGL test start\n");
 
 // 第一步 获取显示设备
@@ -146,7 +148,13 @@ int main()
         surface,
         context
     );
+*/
 
+    EGLManager egl;
+    egl.init(1024,600);
+    printf("GL:%s\n", glGetString(GL_VERSION));
+
+// 下面是OpenGL渲染层(GLRenderer Mesh Sprite等)    
 // 第七步：绘画
     GLRenderer gl_renderer;
     gl_renderer.init();
@@ -194,8 +202,10 @@ int main()
         gl_renderer.draw( &quad, MVP );
 
                 
-        eglSwapBuffers(display,surface);
-        usleep(10000);
+//        eglSwapBuffers(display,surface);
+        egl.swap();
+
+//        usleep(10000);
     }
 
 

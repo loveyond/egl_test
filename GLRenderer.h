@@ -7,7 +7,24 @@
 #include "Matrix4.h"
 #include "Mesh.h"
 
-// 负责怎么把它画出来
+
+/*
+    应用层
+      |
+   Sprite
+      |
+   Mesh
+      |
+ GLRenderer
+      |
+ OpenGL ES
+      |
+ EGLManager
+      |
+Linux Display
+*/
+
+// GLRenderer 负责怎么把它画出来，操作 OpenGL 的
 class GLRenderer
 {
 

@@ -4,7 +4,25 @@
 //#include <GLES2/gl2.h>
 #include <GLES3/gl3.h>
 
-// 负责画什么
+
+
+/*
+    应用层
+      |
+   Sprite
+      |
+   Mesh
+      |
+ GLRenderer
+      |
+ OpenGL ES
+      |
+ EGLManager
+      |
+Linux Display
+*/
+
+// 负责画什么，是“几何模型”
 // 网格
 
 class Mesh
