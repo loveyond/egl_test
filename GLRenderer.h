@@ -47,7 +47,7 @@ private:
 
     GLuint program;
     GLuint VBO;
-    GLuint texture;
+    GLuint textureLoc;
     GLint colorLoc;
 
     GLint mvpLoc;     // 矩阵

@@ -11,6 +11,7 @@
 #include "Sprite.h"
 #include "Mesh.h"
 #include "EGLManager.h"
+#include "Texture.h"
 
 /*
     流程：程序  -> EGLDisplay -> libEGL.so -> Mali GPU驱动 -> /dev/fb0 -> lcd
@@ -25,7 +26,7 @@
 */
 
 
-
+/*
 float vertices[] =
 {
      0,  0,  0,
@@ -36,8 +37,30 @@ float vertices[] =
    200,200,  0,
      0,200,  0
 };
+*/
+float vertices[] =
+{
+    // 位置          // UV
+
+     0,   0, 0,       0,0,
+   200,   0, 0,       1,0,
+     0, 200, 0,       0,1,
 
 
+   200,   0, 0,       1,0,
+   200, 200, 0,       1,1,
+     0, 200, 0,       0,1
+};
+
+
+unsigned char image[] =
+{
+    255,0,0,
+    0,255,0,
+
+    0,0,255,
+    255,255,0
+};
 
 
 int main()
@@ -77,6 +100,8 @@ int main()
 
     Mesh quad(vertices,6);  // 创建矩形Mesh
 
+    Texture texture;
+    texture.create(2,2,image);
 
 
         
@@ -84,6 +109,8 @@ int main()
         gl_renderer.clear();
         gl_renderer.begin();
 
+        texture.bind();
+        
         box1.update();
         box2.update();
 

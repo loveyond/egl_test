@@ -18,7 +18,7 @@ Mesh::Mesh(float* vertices,int count)
     glBindBuffer( GL_ARRAY_BUFFER, VBO);
     glBufferData(
         GL_ARRAY_BUFFER,
-        count*3*sizeof(float),
+        count * 5 * sizeof(float),
         vertices,
         GL_STATIC_DRAW);
 
@@ -28,9 +28,18 @@ Mesh::Mesh(float* vertices,int count)
         3,
         GL_FLOAT,
         GL_FALSE,
-        3*sizeof(float),
+        5 * sizeof(float),
         0);
     glEnableVertexAttribArray(0);
+    // UV
+    glVertexAttribPointer(
+        1,
+        2,
+        GL_FLOAT,
+        GL_FALSE,
+        5*sizeof(float),
+        (void*)(3*sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);       // 解绑 VAO，结束记录
 

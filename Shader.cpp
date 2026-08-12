@@ -21,6 +21,22 @@ bool Shader::load( const char* vertexFile, const char* fragmentFile)
     glAttachShader(program,fs);
     glLinkProgram(program);
 
+
+    GLint success;    
+    glGetProgramiv( program, GL_LINK_STATUS, &success);    
+    printf("program link=%d\n",success);    
+    if(!success)
+    {
+        char log[512];    
+        glGetProgramInfoLog(
+            program,
+            sizeof(log),
+            NULL,
+            log);    
+        printf("link error:%s\n",log);
+    }
+
+
     return true;
 }
 
@@ -64,6 +80,22 @@ GLuint Shader::loadShader( GLenum type, const char *source)
     glShaderSource( shader, 1, &source, NULL );
 
     glCompileShader(shader);
+
+
+    GLint success;    
+    glGetShaderiv( shader, GL_COMPILE_STATUS, &success);
+    printf("shader compile=%d\n",success);
+    if(!success)
+    {
+        char log[512];
+        glGetShaderInfoLog(
+            shader,
+            sizeof(log),
+            NULL,
+            log);
+        printf("shader error:%s\n",log);
+    }
+
 
     return shader;
 }

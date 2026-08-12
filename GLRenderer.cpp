@@ -45,12 +45,13 @@ OpenGL ES自己的坐标系统,顶点坐标范围：x: -1 ~ +1        ，y: -1 ~
 bool GLRenderer::init()
 {
 
-    shader.load( "vertex.glsl",       // 顶点着色器代码
-        "fragment.glsl" );             // 片元着色器代码
+    shader.load( "texture_vertex.glsl",       // 顶点着色器代码
+        "texture_fragment.glsl" );             // 片元着色器代码
 
 
 //第4步： 创建program
     program = shader.getProgram();
+    printf("program=%d\n",program);
 
 
     // 控制矩形移动、缩放、旋转、颜色
@@ -58,7 +59,11 @@ bool GLRenderer::init()
     printf("colorLoc=%d\n",colorLoc);
     
     mvpLoc = glGetUniformLocation(program,"MVP");   // 矩阵
-
+    printf("mvpLoc=%d\n",mvpLoc);
+    
+    textureLoc = glGetUniformLocation(program,"texture0");
+    printf("textureLoc=%d\n",textureLoc);
+    
     return true;
 }
 
@@ -67,9 +72,9 @@ bool GLRenderer::init()
 void GLRenderer::draw( Mesh* mesh, Matrix4& mvp)
 {
     
-    glUniform4f(colorLoc,1.0,0.0,1.0,1.0);
+//    glUniform4f(colorLoc,1.0,0.0,1.0,1.0);
     glUniformMatrix4fv( mvpLoc, 1, GL_FALSE, mvp.m );
-
+    glUniform1i(textureLoc,0);
     mesh->draw();
 
 }

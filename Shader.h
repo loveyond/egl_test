@@ -4,6 +4,16 @@
 
 #include <GLES3/gl3.h>
 
+/*
+             Shader
+               |
+     +---------+---------+
+     |                   |
+ColorShader        TextureShader
+     |                   |
+ 纯色矩形                  图片
+
+*/
 
 // Shader 多种绘制的资源：颜色 Shader、Texture Shader、YUV Shader等等
 class Shader
