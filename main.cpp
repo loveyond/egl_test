@@ -175,40 +175,47 @@ int main()
     texture.create(2,2,image);      // 创建一张 2×2 的 RGB 图片纹理. image --> GPU Texture
 
 // 创建sprite
-    Sprite box1(200,200);
-    Sprite box2(200,200);
+//    Sprite box1(200,200);
+//    Sprite box2(200,200);
+    Sprite box1(&quad, 200, 200);
+    Sprite box2(&circle, 50, 50);
 
     box1.setPosition(100,100);
     box1.setMoveSpeed(0);
+    box1.setTexture(&texture);
+    
     box2.setPosition(500,300);
     box2.setScaleSpeed(0);
-//    box2.setMoveSpeed(0);
+    box2.setColor(1, 1, 0, 1);
+
 
 // MVP    
-    Matrix4 view = Matrix4::translate(-1,0,0);
-    Matrix4 projection = Matrix4::ortho( 0, 1024, 600, 0, -1, 1 );
-
-    Matrix4 model;
-    Matrix4 MVP;
+//    Matrix4 view = Matrix4::translate(-1,0,0);
+//    Matrix4 projection = Matrix4::ortho( 0, 1024, 600, 0, -1, 1 );
+//
+//    Matrix4 model;
+//    Matrix4 MVP;
 
         
     while(1){
         gl_renderer.clear();                // 清屏
         gl_renderer.begin();                // 使用Shader
 
-        texture.bind();                     // 绑定Texture
+//        texture.bind();                     // 绑定Texture
         
         box1.update();                      // 更新Sprite
         box2.update();
 
-        model = box1.getModelMatrix();      // 绘制box1               
-        MVP = projection * view * model;        
-        gl_renderer.draw( &quad, MVP, textureState );
-
-        model = box2.getModelMatrix();      // 绘制box2
-        MVP = projection * view * model;        
-        gl_renderer.draw( &circle, MVP, whiteState );
-                
+//        model = box1.getModelMatrix();      // 绘制box1               
+//        MVP = projection * view * model;        
+//        gl_renderer.draw( &quad, MVP, textureState );
+//
+//        model = box2.getModelMatrix();      // 绘制box2
+//        MVP = projection * view * model;        
+//        gl_renderer.draw( &circle, MVP, whiteState );
+        gl_renderer.draw(box1);
+        gl_renderer.draw(box2);
+        
         egl.swap();                         // 显示
 
 //        usleep(10000);

@@ -64,22 +64,38 @@ bool GLRenderer::init()
     
     textureLoc = glGetUniformLocation(program,"texture0");
     printf("textureLoc=%d\n",textureLoc);
+
+    projection = Matrix4::ortho(0, 1024, 600, 0, -1, 1);
+    view = Matrix4::translate(-1, 0, 0);
+
     
     return true;
 }
 
 
 
-void GLRenderer::draw( Mesh* mesh, Matrix4& mvp, const RenderState& state)
+void GLRenderer::draw( Sprite& sprite)
 {
     
-    glUniform4f(colorLoc, state.color.r, state.color.g, state.color.b, state.color.a);
+    Matrix4 model = sprite.getModelMatrix();
 
-    glUniformMatrix4fv( mvpLoc, 1, GL_FALSE, mvp.m );
-    glUniform1i(textureLoc,0);
-    glUniform1i(useTextureLoc, state.useTexture ? 1 : 0);
+    Matrix4 mvp = projection * view * model;
+
+    const RenderState& state = sprite.getRenderState();
+
+    glUniform4f(colorLoc, state.color.r, state.color.g, state.color.b, state.color.a);
     
-    mesh->draw();
+    glUniformMatrix4fv( mvpLoc, 1, GL_FALSE, mvp.m );
+//    glUniform1i(textureLoc,0);
+    glUniform1i(useTextureLoc, state.useTexture ? 1 : 0);
+
+    if(sprite.getTexture())
+    {
+        sprite.getTexture()->bind();
+        glUniform1i(textureLoc, 0);
+    }
+    
+    sprite.getMesh()->draw();
 
 }
 

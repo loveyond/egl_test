@@ -2,6 +2,8 @@
 #define SPRITE_H
 
 #include "Matrix4.h"
+#include "Mesh.h"
+#include "Texture.h"
 
 /*
           应用层
@@ -25,6 +27,19 @@
         LCD显示
 */
 
+struct RenderColor
+{
+    float r;
+    float g;
+    float b;
+    float a;
+};
+
+struct RenderState
+{
+    RenderColor color;
+    bool useTexture;
+};
 
 
 
@@ -34,7 +49,7 @@ class Sprite    // 精灵(物体)
 {
 public:
 
-    Sprite(float width, float height);
+    Sprite(Mesh* mesh, float width, float height);
 
 
     void setPosition(float x, float y); //设置位置
@@ -48,6 +63,15 @@ public:
 
     Matrix4 getModelMatrix();
 
+    Mesh* getMesh();
+
+    void setColor(float r, float g, float b, float a);
+    void setUseTexture(bool useTexture);
+    void setTexture(Texture* texture);
+
+    Texture* getTexture();
+
+    const RenderState& getRenderState() const;
 
 private:
 
@@ -70,6 +94,10 @@ private:
     float rotateSpeed;
 
     float dir;  // 为scaleSpeed服务
+
+    Mesh* mesh;
+    RenderState renderState;
+    Texture* texture;
 
 
 public:

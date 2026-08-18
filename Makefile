@@ -5,7 +5,7 @@ CXX = $(CROSS_COMPILE)g++
 
 TARGET = egl_test
 
-CXXFLAGS = -I../t507_gpu/include -DEGL_FBDEV=1
+CXXFLAGS = -I../t507_gpu/include -DEGL_FBDEV=1 -std=c++11
 
 LDFLAGS = -L../t507_gpu/lib
 

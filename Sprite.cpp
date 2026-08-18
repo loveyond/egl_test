@@ -5,10 +5,16 @@
 
 // 精灵(物体)
 
-Sprite::Sprite(float width,float height)
+Sprite::Sprite(Mesh* mesh, float width, float height)
 {
+    this->mesh = mesh;
     this->width = width;
     this->height = height;
+    this->texture = nullptr;
+    
+    renderState.color = {1, 1, 1, 1};
+    renderState.useTexture = false;
+
 
     x = 0;
     y = 0;
@@ -59,6 +65,21 @@ void Sprite::setRotateSpeed(float rotateSpeed)
     this->rotateSpeed = rotateSpeed;
 }
 
+void Sprite::setColor(float r, float g, float b, float a)
+{
+    renderState.color = {r, g, b, a};
+}
+
+void Sprite::setUseTexture(bool useTexture)
+{
+    renderState.useTexture = useTexture;
+}
+
+void Sprite::setTexture(Texture* texture)
+{
+    this->texture = texture;
+    renderState.useTexture = true;
+}
 
 
 Matrix4 Sprite::getModelMatrix()
@@ -69,6 +90,21 @@ Matrix4 Sprite::getModelMatrix()
         Matrix4::rotate(angle) *
         Matrix4::scale(scale,scale,1) *
         Matrix4::translate(-pivotX,-pivotY,0);  // 先把旋转中心移动到原点
+}
+
+const RenderState& Sprite::getRenderState() const
+{
+    return renderState;
+}
+
+Texture* Sprite::getTexture()
+{
+    return texture;
+}
+
+Mesh* Sprite::getMesh()
+{
+    return mesh;
 }
 
 void Sprite::update()

@@ -7,6 +7,7 @@
 #include "Matrix4.h"
 #include "Mesh.h"
 #include "Shader.h"
+#include "Sprite.h"
 
 /*
                 应用层
@@ -30,19 +31,6 @@
               LCD显示
 */
 
-struct RenderColor
-{
-    float r;
-    float g;
-    float b;
-    float a;
-};
-
-struct RenderState
-{
-    RenderColor color;
-    bool useTexture;
-};
 
 
 // GLRenderer 负责怎么把它画出来，操作 OpenGL 的
@@ -54,7 +42,7 @@ public:
 
     bool init();
 
-    void draw( Mesh* mesh, Matrix4& mvp, const RenderState& state);
+    void draw( Sprite& sprite);
 
     void clear();
 
@@ -82,6 +70,9 @@ private:
     char *fragmentSource;
 
     Shader shader;
+
+    Matrix4 projection;
+    Matrix4 view;
 
 };
 
