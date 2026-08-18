@@ -6,6 +6,10 @@
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 
+#include <vector>
+#include <cmath>
+
+
 #include "GLRenderer.h"
 #include "Matrix4.h"
 #include "Sprite.h"
@@ -13,8 +17,31 @@
 #include "EGLManager.h"
 #include "Texture.h"
 
+
 /*
-    流程：程序  -> EGLDisplay -> libEGL.so -> Mali GPU驱动 -> /dev/fb0 -> lcd
+                应用层
+                Sprite
+                  |
+            -----------------
+            |               |
+          Mesh          Texture
+            |               |
+            -----------------
+                  |
+          GLRenderer + Shader
+                  |
+                  |
+              OpenGL ES
+                  |
+                  |
+             EGLManager
+                  |
+                  |
+              LCD显示
+*/
+
+/*
+    初始化流程：初始化EGL  -> 初始化Renderer / Shader -> 创建 GPU 资源(VAO、VBO)Mesh / Texture -> 创建 Sprite -> 准备 Camera / MVP 
 
 */
 
@@ -38,7 +65,7 @@ float vertices[] =
      0,200,  0
 };
 */
-float vertices[] =
+float rectangleVertices[] =
 {
     // 位置          // UV
 
@@ -62,6 +89,63 @@ unsigned char image[] =
     255,255,0
 };
 
+RenderState textureState = {
+    {1, 1, 1, 1},
+    true
+};
+
+RenderState whiteState = {
+    {1, 1, 1, 1},
+    false
+};
+
+RenderState redState = {
+    {1, 0, 0, 1},
+    false
+};
+
+
+/*
+    在一个 2 × radius 的正方形里，生成一个圆的“圆心 + 圆周顶点”，每个顶点包含 x、y、z、u、v 5 个数据
+    ┌────┬────┬────┬────┬────┐
+    │ x  │ y  │ z  │ u  │ v  │
+    └────┴────┴────┴────┴────┘
+*/
+std::vector<float> createCircle(float radius, int segments)
+{
+    std::vector<float> vertices;
+
+    float centerX = radius;
+    float centerY = radius;
+
+    // 圆心
+    vertices.push_back(centerX);
+    vertices.push_back(centerY);
+    vertices.push_back(0.0f);
+    vertices.push_back(0.5f);       // 圆心的uv也是纹理的中心
+    vertices.push_back(0.5f);       // 圆心的uv也是纹理的中心
+
+    // 圆周
+    for(int i = 0; i <= segments; i++)
+    {
+        float angle = 2.0f * M_PI * i / segments;
+
+        float x = centerX + radius * cosf(angle);
+        float y = centerY + radius * sinf(angle);
+
+        float u = (x - centerX) / (2.0f * radius) + 0.5f;
+        float v = (y - centerY) / (2.0f * radius) + 0.5f;
+
+        vertices.push_back(x);
+        vertices.push_back(y);
+        vertices.push_back(0.0f);
+        vertices.push_back(u);
+        vertices.push_back(v);
+    }
+
+    return vertices;
+}
+
 
 int main()
 {
@@ -72,19 +156,25 @@ int main()
     printf("GL:%s\n", glGetString(GL_VERSION));
 
 // 下面是OpenGL渲染层(GLRenderer Mesh Sprite等)    
-// 第七步：绘画
+    // Renderer / Shader
     GLRenderer gl_renderer;
     gl_renderer.init();
 
+    // Mesh / Texture
+    // 创建GPU资源(VAO、VBO)
+    Mesh quad(rectangleVertices,6);  // 创建矩形Mesh
+    
+    std::vector<float> circleVertices = createCircle(100, 32);
+    Mesh circle(
+        circleVertices.data(),
+        circleVertices.size() / 5,
+        GL_TRIANGLE_FAN);    
+        
+    // 把 CPU 里的 RGB 图片数据，创建成 GPU 里的 2D Texture
+    Texture texture;
+    texture.create(2,2,image);      // 创建一张 2×2 的 RGB 图片纹理. image --> GPU Texture
 
-
-
-// MVP
-    Matrix4 model;
-    Matrix4 view;
-    Matrix4 projection;
-    Matrix4 MVP;
-
+// 创建sprite
     Sprite box1(200,200);
     Sprite box2(200,200);
 
@@ -94,37 +184,32 @@ int main()
     box2.setScaleSpeed(0);
 //    box2.setMoveSpeed(0);
 
-    view = Matrix4::translate(-1,0,0);
-    projection =
-        Matrix4::ortho( 0, 1024, 600, 0, -1, 1 );
+// MVP    
+    Matrix4 view = Matrix4::translate(-1,0,0);
+    Matrix4 projection = Matrix4::ortho( 0, 1024, 600, 0, -1, 1 );
 
-    Mesh quad(vertices,6);  // 创建矩形Mesh
-
-    Texture texture;
-    texture.create(2,2,image);
-
+    Matrix4 model;
+    Matrix4 MVP;
 
         
     while(1){
-        gl_renderer.clear();
-        gl_renderer.begin();
+        gl_renderer.clear();                // 清屏
+        gl_renderer.begin();                // 使用Shader
 
-        texture.bind();
+        texture.bind();                     // 绑定Texture
         
-        box1.update();
+        box1.update();                      // 更新Sprite
         box2.update();
 
-        model = box1.getModelMatrix();                            
+        model = box1.getModelMatrix();      // 绘制box1               
         MVP = projection * view * model;        
-        gl_renderer.draw( &quad, MVP );
+        gl_renderer.draw( &quad, MVP, textureState );
 
-        model = box2.getModelMatrix();
+        model = box2.getModelMatrix();      // 绘制box2
         MVP = projection * view * model;        
-        gl_renderer.draw( &quad, MVP );
-
+        gl_renderer.draw( &circle, MVP, whiteState );
                 
-//        eglSwapBuffers(display,surface);
-        egl.swap();
+        egl.swap();                         // 显示
 
 //        usleep(10000);
     }

@@ -4,6 +4,29 @@
 
 #include <GLES3/gl3.h>
 
+
+/*
+      应用层
+      Sprite
+        |
+  -----------------
+  |               |
+Mesh          Texture
+  |               |
+  -----------------
+        |
+GLRenderer + Shader
+        |
+        |
+    OpenGL ES
+        |
+        |
+   EGLManager
+        |
+        |
+    LCD显示
+
+*/
 /*
              Shader
                |

@@ -3,24 +3,32 @@
 
 #include "Matrix4.h"
 
-
 /*
-    应用层
-      |
-   Sprite
-      |
-   Mesh
-      |
- GLRenderer
-      |
- OpenGL ES
-      |
- EGLManager
-      |
-Linux Display
+          应用层
+          Sprite
+            |
+      -----------------
+      |               |
+    Mesh          Texture
+      |               |
+      -----------------
+            |
+    GLRenderer + Shader
+            |
+            |
+        OpenGL ES
+            |
+            |
+       EGLManager
+            |
+            |
+        LCD显示
 */
 
-// 负责“这个东西在哪里、大小多少”，是一个会移动、旋转、缩放的对象。
+
+
+
+// 上层封装，负责“这个东西在哪里、大小多少”，是一个会移动、旋转、缩放的对象，比如：按钮
 
 class Sprite    // 精灵(物体)
 {

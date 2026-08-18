@@ -48,15 +48,16 @@ bool GLRenderer::init()
     shader.load( "texture_vertex.glsl",       // 顶点着色器代码
         "texture_fragment.glsl" );             // 片元着色器代码
 
-
-//第4步： 创建program
     program = shader.getProgram();
     printf("program=%d\n",program);
 
 
-    // 控制矩形移动、缩放、旋转、颜色
+    // 控制矩形移动、缩放、旋转、颜色等
     colorLoc = glGetUniformLocation(program,"color");
     printf("colorLoc=%d\n",colorLoc);
+
+    useTextureLoc = glGetUniformLocation(program,"useTexture");
+    printf("useTextureLoc=%d\n",useTextureLoc);
     
     mvpLoc = glGetUniformLocation(program,"MVP");   // 矩阵
     printf("mvpLoc=%d\n",mvpLoc);
@@ -69,12 +70,15 @@ bool GLRenderer::init()
 
 
 
-void GLRenderer::draw( Mesh* mesh, Matrix4& mvp)
+void GLRenderer::draw( Mesh* mesh, Matrix4& mvp, const RenderState& state)
 {
     
-//    glUniform4f(colorLoc,1.0,0.0,1.0,1.0);
+    glUniform4f(colorLoc, state.color.r, state.color.g, state.color.b, state.color.a);
+
     glUniformMatrix4fv( mvpLoc, 1, GL_FALSE, mvp.m );
     glUniform1i(textureLoc,0);
+    glUniform1i(useTextureLoc, state.useTexture ? 1 : 0);
+    
     mesh->draw();
 
 }

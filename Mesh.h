@@ -7,29 +7,35 @@
 
 
 /*
-    应用层
-      |
-   Sprite
-      |
-   Mesh
-      |
- GLRenderer
-      |
- OpenGL ES
-      |
- EGLManager
-      |
-Linux Display
+                应用层
+                Sprite
+                  |
+            -----------------
+            |               |
+          Mesh          Texture
+            |               |
+            -----------------
+                  |
+          GLRenderer + Shader
+                  |
+                  |
+              OpenGL ES
+                  |
+                  |
+             EGLManager
+                  |
+                  |
+              LCD显示
 */
 
-// 负责画什么，是“几何模型”
+// 负责画什么，是“几何模型”, Sprite 负责“怎么动”，Mesh 负责“长什么样”
 // 网格
 
 class Mesh
 {
 public:
 
-    Mesh(float* vertices, int vertexCount);
+    Mesh(const float* vertices, int vertexCount, GLenum drawMode = GL_TRIANGLES);
 
     ~Mesh();
 
@@ -43,6 +49,7 @@ private:
     GLuint VBO;
 
     int vertexCount;
+    GLenum drawMode;
 };
 
 

@@ -1,0 +1,21 @@
+
+./egl_test
+EGL test start
+eglGetDisplay success
+EGL version 1.4
+config count=1
+surface create success
+context create success
+eglMakeCurrent success
+GL:OpenGL ES 3.2 v1.r20p0-01rel0.8802b4327f9e69cec3438957f40dba06
+shader compile=1
+shader compile=1
+program link=1
+program=3
+colorLoc=-1
+mvpLoc=1
+textureLoc=0
+texture id=1
+
+
+

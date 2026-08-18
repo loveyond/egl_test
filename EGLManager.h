@@ -6,22 +6,28 @@
 //#include <fb.h>
 
 /*
-    应用层
-      |
-   Sprite
-      |
-   Mesh
-      |
- GLRenderer
-      |
- OpenGL ES
-      |
- EGLManager
-      |
-Linux Display
+                应用层
+                Sprite
+                  |
+            -----------------
+            |               |
+          Mesh          Texture
+            |               |
+            -----------------
+                  |
+          GLRenderer + Shader
+                  |
+                  |
+              OpenGL ES
+                  |
+                  |
+             EGLManager
+                  |
+                  |
+              LCD显示
 */
 /*
-    EGLManager 负责“窗口和显示环境”,是最底层，与硬件打交道
+    EGLManager 负责“窗口和显示环境”,是最底层，与硬件打交道，并且绑定硬件和openGL ES
 */
 
 class EGLManager

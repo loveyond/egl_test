@@ -3,13 +3,18 @@
 
 #include "EGLManager.h"
 
-
+/*
+    属性 = 值
+    属性 = 值
+    ...
+    结束
+*/
 static EGLint attribs[] =
 {
-    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,           // 创建 窗口Surface
+    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,           // 创建 窗口Surface类型
 
-    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,    // 用OpenGL ES 2.0
-
+    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,    // 用OpenGL ES 3.0，实际版本号是：OpenGL ES 3.2 v1.r20p0-01rel0.8802b4327f9e69cec3438957f40dba06
+                                                // 用ES 2.0也行
     EGL_RED_SIZE, 8,                            // RGB888
     EGL_GREEN_SIZE, 8,
     EGL_BLUE_SIZE, 8,
@@ -19,19 +24,17 @@ static EGLint attribs[] =
 
 static EGLint contextAttribs[] =
 {
-    EGL_CONTEXT_CLIENT_VERSION,         // OpenGL ES 2.0
-    2,
+    EGL_CONTEXT_CLIENT_VERSION,         // OpenGL ES 3.0。用2.0也行
+    3,
     EGL_NONE
 };
 
 
+// EGL负责"在哪里画":连接显示设备  及参数
+// 流程：eglGetDisplay -> eglInitialize -> eglChooseConfig -> eglCreateWindowSurface -> eglCreateContext -> eglMakeCurrent
 bool EGLManager::init( int width, int height)
 {
     printf("EGL test start\n");
-
-//    memset(&window,0,sizeof(window));
-
-// EGL负责"在哪里画":连接显示设备  及参数
 
 // 第一步 获取显示设备
     
@@ -61,7 +64,7 @@ bool EGLManager::init( int width, int height)
             display,
             attribs,
             &config,
-            1,
+            1,                  // 最多返回几个Config，这里只需要1个
             &num_config))
     {
         printf("eglChooseConfig failed\n");
@@ -70,13 +73,10 @@ bool EGLManager::init( int width, int height)
     printf("config count=%d\n", num_config);
 
 // 第四步 创建显示窗口：[ EGL_DEFAULT_DISPLAY(/dev/fb0)和 EGL 的连接 ]
-    // 4.1 创建 fbdev_window
 
     window.width = width;
     window.height = height;
-
-    // 4.2 创建   EGL Surface
-        
+    // 创建   EGL Surface        
     surface = eglCreateWindowSurface(
             display,
             config,
@@ -106,7 +106,7 @@ bool EGLManager::init( int width, int height)
     }
     printf("context create success\n");
 
-// 第六步：绑定
+// 第六步：绑定 硬件和openGL ES
     if(!eglMakeCurrent(
             display,
             surface,

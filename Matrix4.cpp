@@ -68,7 +68,10 @@ Matrix4 Matrix4::scale(float x,float y,float z)
 
 /*
 正交投影矩阵
-
+    把像素坐标转换成GL坐标:
+    left\right  --> x
+    bottom\top  --> y
+    near\far    --> z
 */
 Matrix4 Matrix4::ortho(
         float left,

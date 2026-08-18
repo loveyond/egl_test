@@ -9,22 +9,44 @@
 #include "Shader.h"
 
 /*
-    应用层
-      |
-   Sprite
-      |
-   Mesh
-      |
- GLRenderer
-      |
- OpenGL ES
-      |
- EGLManager
-      |
-Linux Display
+                应用层
+                Sprite
+                  |
+            -----------------
+            |               |
+          Mesh          Texture
+            |               |
+            -----------------
+                  |
+          GLRenderer + Shader
+                  |
+                  |
+              OpenGL ES
+                  |
+                  |
+             EGLManager
+                  |
+                  |
+              LCD显示
 */
 
+struct RenderColor
+{
+    float r;
+    float g;
+    float b;
+    float a;
+};
+
+struct RenderState
+{
+    RenderColor color;
+    bool useTexture;
+};
+
+
 // GLRenderer 负责怎么把它画出来，操作 OpenGL 的
+// GLRenderer渲染 + Shader着色
 class GLRenderer
 {
 
@@ -32,7 +54,7 @@ public:
 
     bool init();
 
-    void draw( Mesh* mesh, Matrix4& mvp);
+    void draw( Mesh* mesh, Matrix4& mvp, const RenderState& state);
 
     void clear();
 
@@ -49,6 +71,7 @@ private:
     GLuint VBO;
     GLuint textureLoc;
     GLint colorLoc;
+    GLint useTextureLoc;
 
     GLint mvpLoc;     // 矩阵
 
