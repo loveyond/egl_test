@@ -70,16 +70,16 @@ float vertices[] =
 */
 float rectangleVertices[] =
 {
-    // 位置          // UV
+    //                // UV
 
-     0,   0, 0,       0,0,
-   200,   0, 0,       1,0,
-     0, 200, 0,       0,1,
+   0,   0, 0,       0,0,
+   1,   0, 0,       1,0,
+     0, 1, 0,       0,1,
 
 
-   200,   0, 0,       1,0,
-   200, 200, 0,       1,1,
-     0, 200, 0,       0,1
+   1,   0, 0,       1,0,
+   1, 1, 0,       1,1,
+     0, 1, 0,       0,1
 };
 
 
@@ -109,17 +109,18 @@ RenderState redState = {
 
 
 /*
-    在一个 2 × radius 的正方形里，生成一个圆的“圆心 + 圆周顶点”，每个顶点包含 x、y、z、u、v 5 个数据
+    在一个 1 × 1 的正方形里，生成一个圆的“圆心 + 圆周顶点”，每个顶点包含 x、y、z、u、v 5 个数据
     ┌────┬────┬────┬────┬────┐
     │ x  │ y  │ z  │ u  │ v  │
     └────┴────┴────┴────┴────┘
 */
-std::vector<float> createCircle(float radius, int segments)
+std::vector<float> createCircle(int segments)
 {
     std::vector<float> vertices;
 
-    float centerX = radius;
-    float centerY = radius;
+    const float centerX = 0.5f;
+    const float centerY = 0.5f;
+    const float radius = 0.5f;
 
     // 圆心
     vertices.push_back(centerX);
@@ -197,7 +198,7 @@ int main()
     // 创建GPU资源(VAO、VBO)
     Mesh quad(rectangleVertices,6);  // 创建矩形Mesh
     
-    std::vector<float> circleVertices = createCircle(100, 32);
+    std::vector<float> circleVertices = createCircle(32);
     Mesh circle(
         circleVertices.data(),
         circleVertices.size() / 5,
@@ -212,48 +213,33 @@ int main()
     stbi_image_free(imageFrame.img);
 
 // 创建sprite
-    Sprite box1(&quad, 200, 200);
-    Sprite box2(&circle, 50, 50);   // 圆的尺寸这里暂时改变不了
+    Sprite photo1(&quad, 200, 200);
+    Sprite circle1(&circle, 50, 50);
 
-    box1.setPosition(100,100);
-    box1.setMoveSpeed(0);
-    box1.setTexture(&texture);
+    photo1.setPosition(1024/2,600/2);
+    photo1.setMoveSpeed(0);
+    photo1.setTexture(&texture);
     
-    box2.setPosition(500,300);
-    box2.setScaleSpeed(0);
-    box2.setColor(1, 1, 0, 1);
+    circle1.setPosition(500,300);
+    circle1.setScaleSpeed(0);
+    circle1.setColor(1, 1, 0, 1);
 
 
 // MVP被封装进了renderer    
-//    Matrix4 view = Matrix4::translate(-1,0,0);
-//    Matrix4 projection = Matrix4::ortho( 0, 1024, 600, 0, -1, 1 );
-//
-//    Matrix4 model;
-//    Matrix4 MVP;
 
         
     while(1){
         gl_renderer.clear();                // 清屏
         gl_renderer.begin();                // 使用Shader
-
-//        texture.bind();                     // 绑定Texture
         
-        box1.update();                      // 更新Sprite
-        box2.update();
+        photo1.update();                      // 更新Sprite
+        circle1.update();
 
-//        model = box1.getModelMatrix();      // 绘制box1               
-//        MVP = projection * view * model;        
-//        gl_renderer.draw( &quad, MVP, textureState );
-//
-//        model = box2.getModelMatrix();      // 绘制box2
-//        MVP = projection * view * model;        
-//        gl_renderer.draw( &circle, MVP, whiteState );
-        gl_renderer.draw(box1);
-        gl_renderer.draw(box2);
+        gl_renderer.draw(photo1);
+        gl_renderer.draw(circle1);
         
         egl.swap();                         // 显示
 
-//        usleep(10000);
     }
 
 

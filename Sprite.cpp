@@ -28,8 +28,8 @@ Sprite::Sprite(Mesh* mesh, float width, float height)
     rotateSpeed = 1.0f;
 
 
-    pivotX = width / 2.0f;
-    pivotY = height / 2.0f;
+    pivotX = 0.5f;//width / 2.0f;      // 在中心
+    pivotY = 0.5f;//height / 2.0f;
 }
 
 
@@ -60,6 +60,7 @@ void Sprite::setScaleSpeed(float scaleSpeed)
 {
     this->scaleSpeed = scaleSpeed;
 }
+
 void Sprite::setRotateSpeed(float rotateSpeed)
 {
     this->rotateSpeed = rotateSpeed;
@@ -88,7 +89,7 @@ Matrix4 Sprite::getModelMatrix()
         Matrix4::translate(x,y,0) *
         Matrix4::translate(pivotX,pivotY,0) *   // // 然后恢复原来的中心
         Matrix4::rotate(angle) *
-        Matrix4::scale(scale,scale,1) *
+        Matrix4::scale(width * scale, height * scale,1) *
         Matrix4::translate(-pivotX,-pivotY,0);  // 先把旋转中心移动到原点
 }
 

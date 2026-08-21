@@ -56,9 +56,9 @@ public:
     void setScale(float s); // 设置缩放
     void setAngle(float angle);  // 设置旋转
 
-    void setMoveSpeed(float moveSpeed);
-    void setScaleSpeed(float scaleSpeed);
-    void setRotateSpeed(float rotateSpeed);
+    void setMoveSpeed(float moveSpeed);                 // 设置移动速度
+    void setScaleSpeed(float scaleSpeed);           // 设置缩放速度
+    void setRotateSpeed(float rotateSpeed);     // 设置旋转速度
 
 
     Matrix4 getModelMatrix();
