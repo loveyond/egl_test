@@ -92,7 +92,7 @@ void GLRenderer::draw( Sprite& sprite)
     if(sprite.getTexture())
     {
         sprite.getTexture()->bind();
-        glUniform1i(textureLoc, 0);
+        glUniform1i(textureLoc, 0);         // texture0 应该去 第 0 个 Texture Unit(不是 Texture ID) 取数据
     }
     
     sprite.getMesh()->draw();

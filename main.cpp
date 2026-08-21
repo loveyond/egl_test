@@ -17,6 +17,9 @@
 #include "EGLManager.h"
 #include "Texture.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 
 /*
                 应用层
@@ -147,6 +150,36 @@ std::vector<float> createCircle(float radius, int segments)
 }
 
 
+struct ImageFrame
+{
+    unsigned char* img;
+    int w;
+    int h;
+    int ch;
+};
+
+int jpg2rgb(ImageFrame &image)
+{
+    image.img = stbi_load(
+        "f_20260820_173757.jpg",
+        &image.w,
+        &image.h,
+        &image.ch,
+        3
+    );
+    
+    if(!image.img)
+    {
+        printf("stbi_load failed: %s\n", stbi_failure_reason());
+        return -1;
+    }
+    
+    printf("image: %d x %d channels=%d\n", image.w, image.h, image.ch);
+    return 0;
+}
+
+
+
 int main()
 {
 
@@ -156,11 +189,11 @@ int main()
     printf("GL:%s\n", glGetString(GL_VERSION));
 
 // 下面是OpenGL渲染层(GLRenderer Mesh Sprite等)    
-    // Renderer / Shader
+// Renderer / Shader
     GLRenderer gl_renderer;
     gl_renderer.init();
 
-    // Mesh / Texture
+// Mesh / Texture
     // 创建GPU资源(VAO、VBO)
     Mesh quad(rectangleVertices,6);  // 创建矩形Mesh
     
@@ -172,13 +205,15 @@ int main()
         
     // 把 CPU 里的 RGB 图片数据，创建成 GPU 里的 2D Texture
     Texture texture;
-    texture.create(2,2,image);      // 创建一张 2×2 的 RGB 图片纹理. image --> GPU Texture
+//    texture.create(2,2,image);      // 创建一张 2×2 的 RGB 图片纹理. image --> GPU Texture
+    ImageFrame imageFrame;
+    jpg2rgb(imageFrame);
+    texture.create(imageFrame.w,imageFrame.h,imageFrame.img);
+    stbi_image_free(imageFrame.img);
 
 // 创建sprite
-//    Sprite box1(200,200);
-//    Sprite box2(200,200);
     Sprite box1(&quad, 200, 200);
-    Sprite box2(&circle, 50, 50);
+    Sprite box2(&circle, 50, 50);   // 圆的尺寸这里暂时改变不了
 
     box1.setPosition(100,100);
     box1.setMoveSpeed(0);
@@ -189,7 +224,7 @@ int main()
     box2.setColor(1, 1, 0, 1);
 
 
-// MVP    
+// MVP被封装进了renderer    
 //    Matrix4 view = Matrix4::translate(-1,0,0);
 //    Matrix4 projection = Matrix4::ortho( 0, 1024, 600, 0, -1, 1 );
 //

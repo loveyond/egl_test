@@ -23,8 +23,8 @@ bool Texture::create( int width, int height, unsigned char* data)
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);  // 当纹理被缩小的时候，怎么采样？GL_LINEAR 会做线性插值，让缩小后的图片比较平滑
 
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  // 纹理被放大的时候，怎么采样? GL_LINEAR 会做线性插值，让放大后的图片比较平滑
-    /* 把 CPU 里的 data 图片数据上传到当前绑定的 GPU Texture
-        
+    /* 
+        把 CPU 里的 data 图片数据上传到当前绑定的 GPU Texture        
     */
     glTexImage2D(
         GL_TEXTURE_2D,                  // 二维纹理
