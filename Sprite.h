@@ -60,6 +60,9 @@ public:
     void setScaleSpeed(float scaleSpeed);           // 设置缩放速度
     void setRotateSpeed(float rotateSpeed);     // 设置旋转速度
 
+    void setParent(Sprite* parent);             // 设置父物件
+
+    void setOrbit(float radius, float speed);       // 设置轨道运动
 
     Matrix4 getModelMatrix();
 
@@ -98,6 +101,13 @@ private:
     Mesh* mesh;
     RenderState renderState;
     Texture* texture;
+
+    Sprite* parent;
+
+    bool orbitEnable;
+    float orbitRadius;
+    float orbitAngle;
+    float orbitSpeed;
 
 
 public:
