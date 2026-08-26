@@ -74,7 +74,7 @@ bool GLRenderer::init()
 
 
 
-void GLRenderer::draw( Sprite& sprite)
+void GLRenderer::draw( Sprite& sprite, Frame* frame)
 {
     
     Matrix4 model = sprite.getModelMatrix();
@@ -91,6 +91,8 @@ void GLRenderer::draw( Sprite& sprite)
 
     if(sprite.getTexture())
     {
+        if(frame)
+            sprite.getTexture()->update(frame->width, frame->height, frame->rgb.data());
         sprite.getTexture()->bind();
         glUniform1i(textureLoc, 0);         // texture0 应该去 第 0 个 Texture Unit(不是 Texture ID) 取数据
     }

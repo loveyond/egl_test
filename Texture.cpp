@@ -45,6 +45,27 @@ bool Texture::create( int width, int height, unsigned char* data)
 
 
 
+bool Texture::update(int width, int height, unsigned char* data)
+{
+    glBindTexture(GL_TEXTURE_2D, id);
+
+    glTexSubImage2D(
+        GL_TEXTURE_2D,
+        0,
+        0,
+        0,
+        width,
+        height,
+        GL_RGB,
+        GL_UNSIGNED_BYTE,
+        data);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    return true;
+}
+
+
 void Texture::bind()
 {
     glBindTexture( GL_TEXTURE_2D, id);

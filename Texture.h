@@ -34,6 +34,8 @@ public:
     Texture();
 
     bool create( int width, int height, unsigned char* data );
+    
+    bool update( int width, int height, unsigned char* data );
 
     void bind();
 

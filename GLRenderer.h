@@ -8,6 +8,7 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "Sprite.h"
+#include "Frame.h"
 
 /*
                 应用层
@@ -42,7 +43,7 @@ public:
 
     bool init();
 
-    void draw( Sprite& sprite);
+    void draw( Sprite& sprite, Frame* frame = nullptr);
 
     void clear();
 

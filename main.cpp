@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h> 
+#include <csignal>
 
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
@@ -16,6 +17,8 @@
 #include "Mesh.h"
 #include "EGLManager.h"
 #include "Texture.h"
+#include "CameraEngine.h"
+#include "FrameBuffer.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -183,7 +186,13 @@ int jpg2rgb(ImageFrame &image)
 
 int main()
 {
+    signal(SIGINT, SIG_DFL);
 
+
+    Frame frame;
+    FrameBuffer frameBuffer;
+    CameraEngine cameraEngine(&frameBuffer);
+    cameraEngine.init();
 
     EGLManager egl;
     egl.init(1024,600);
@@ -213,7 +222,7 @@ int main()
     stbi_image_free(imageFrame.img);
 
 // 创建sprite
-    Sprite photo1(&quad, 200, 200);
+    Sprite photo1(&quad, 320, 200);
 
     photo1.setPosition(1024/2,600/2);
     photo1.setMoveSpeed(0);
@@ -235,16 +244,25 @@ int main()
 
     while(1){
 
+    
         gl_renderer.clear();                // 清屏
         gl_renderer.begin();                // 使用Shader
         
         photo1.update();                      // 更新Sprite
         circle1.update();
 
-        gl_renderer.draw(photo1);
+        if(cameraEngine.capture(frame)) {
+            gl_renderer.draw(photo1, &frame);
+        }
+        else {
+            gl_renderer.draw(photo1);
+        }
         gl_renderer.draw(circle1);
         
         egl.swap();                         // 显示
+
+
+
 
     }
 
