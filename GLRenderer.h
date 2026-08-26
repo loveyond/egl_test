@@ -43,7 +43,7 @@ public:
 
     bool init();
 
-    void draw( Sprite& sprite, Frame* frame = nullptr);
+    void draw( Sprite& sprite);//, Frame* frame = nullptr);
 
     void clear();
 
@@ -60,7 +60,12 @@ private:
     GLuint VBO;
     GLuint textureLoc;
     GLint colorLoc;
-    GLint useTextureLoc;
+    GLint renderModeLoc;        // 0 = 纯颜色    1 = RGB 2 = YUV
+
+    GLint texYLoc;
+    GLint texULoc;
+    GLint texVLoc;
+
 
     GLint mvpLoc;     // 矩阵
 
@@ -75,6 +80,10 @@ private:
     Matrix4 projection;
     Matrix4 view;
 
+//    Texture textureY;
+//    Texture textureU;
+//    Texture textureV;
+    
 };
 
 #endif

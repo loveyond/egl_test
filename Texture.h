@@ -33,11 +33,13 @@ public:
 
     Texture();
 
-    bool create( int width, int height, unsigned char* data );
+    bool create( int width, int height, unsigned char* data );          // 显示图片用
+    bool createGray(int width, int height, const unsigned char* data);        // 显示Y U V 用
     
     bool update( int width, int height, unsigned char* data );
+    void updateGray(int width, int height, const unsigned char* data);
 
-    void bind();
+    void bind(int unit);
 
 private:
 

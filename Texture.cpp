@@ -10,7 +10,7 @@ Texture::Texture()
     id = 0;
 }
 
-
+// 显示图片
 bool Texture::create( int width, int height, unsigned char* data)
 {
     // 创建一个 OpenGL Texture 对象，并返回一个 ID
@@ -44,6 +44,53 @@ bool Texture::create( int width, int height, unsigned char* data)
 }
 
 
+// Y U V
+bool Texture::createGray(int width, int height, const unsigned char* data)
+{
+    glGenTextures(1, &id);
+
+    glBindTexture(GL_TEXTURE_2D, id);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_R8,                          // GPU 只保存一个 8-bit 通道
+        width,
+        height,
+        0,
+        GL_RED,
+        GL_UNSIGNED_BYTE,
+        data);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    return true;
+}
+
+
+void Texture::updateGray(int width, int height, const unsigned char* data)
+{
+    glBindTexture(GL_TEXTURE_2D, id);
+
+    glTexSubImage2D(
+        GL_TEXTURE_2D,
+        0,
+        0,
+        0,
+        width,
+        height,
+        GL_RED,
+        GL_UNSIGNED_BYTE,
+        data);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 
 bool Texture::update(int width, int height, unsigned char* data)
 {
@@ -66,8 +113,9 @@ bool Texture::update(int width, int height, unsigned char* data)
 }
 
 
-void Texture::bind()
+void Texture::bind(int unit)
 {
+    glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture( GL_TEXTURE_2D, id);
 }
 

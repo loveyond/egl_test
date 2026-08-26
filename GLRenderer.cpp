@@ -56,14 +56,20 @@ bool GLRenderer::init()
     colorLoc = glGetUniformLocation(program,"color");
     printf("colorLoc=%d\n",colorLoc);
 
-    useTextureLoc = glGetUniformLocation(program,"useTexture");
-    printf("useTextureLoc=%d\n",useTextureLoc);
+    renderModeLoc = glGetUniformLocation(program,"renderMode");
+    printf("renderModeLoc=%d\n",renderModeLoc);
     
     mvpLoc = glGetUniformLocation(program,"MVP");   // 矩阵
     printf("mvpLoc=%d\n",mvpLoc);
     
     textureLoc = glGetUniformLocation(program,"texture0");
     printf("textureLoc=%d\n",textureLoc);
+
+    texYLoc = glGetUniformLocation(program, "texY");
+    texULoc = glGetUniformLocation(program, "texU");
+    texVLoc = glGetUniformLocation(program, "texV");
+    printf("texYLoc=%d, texULoc=%d, texVLoc=%d\n",texYLoc, texULoc, texVLoc);
+
 
     projection = Matrix4::ortho(0, 1024, 600, 0, -1, 1);
     view = Matrix4::translate(-1, 0, 0);
@@ -74,9 +80,10 @@ bool GLRenderer::init()
 
 
 
-void GLRenderer::draw( Sprite& sprite, Frame* frame)
+void GLRenderer::draw( Sprite& sprite)
 {
     
+
     Matrix4 model = sprite.getModelMatrix();
 
     Matrix4 mvp = projection * view * model;
@@ -86,16 +93,34 @@ void GLRenderer::draw( Sprite& sprite, Frame* frame)
     glUniform4f(colorLoc, state.color.r, state.color.g, state.color.b, state.color.a);
     
     glUniformMatrix4fv( mvpLoc, 1, GL_FALSE, mvp.m );
-//    glUniform1i(textureLoc,0);
-    glUniform1i(useTextureLoc, state.useTexture ? 1 : 0);
 
-    if(sprite.getTexture())
+    if(sprite.getYUVTexture())
     {
-        if(frame)
-            sprite.getTexture()->update(frame->width, frame->height, frame->rgb.data());
-        sprite.getTexture()->bind();
-        glUniform1i(textureLoc, 0);         // texture0 应该去 第 0 个 Texture Unit(不是 Texture ID) 取数据
+        YUVTexture* yuv = sprite.getYUVTexture();
+
+        yuv->getY()->bind(0);
+        yuv->getU()->bind(1);
+        yuv->getV()->bind(2);
+
+        glUniform1i(texYLoc, 0);
+        glUniform1i(texULoc, 1);
+        glUniform1i(texVLoc, 2);
+
+        glUniform1i(renderModeLoc, 2);   // 例如：2 表示 YUV
     }
+    else if(sprite.getTexture())
+    {
+        sprite.getTexture()->bind(0);
+
+        glUniform1i(textureLoc, 0);
+
+        glUniform1i(renderModeLoc, 1);   // 例如：1 表示普通 RGB
+    }
+    else
+    {
+        glUniform1i(renderModeLoc, 0);   // 纯颜色.texture0 应该去 第 0 个 Texture Unit(不是 Texture ID) 取数据
+    }
+
     
     sprite.getMesh()->draw();
 

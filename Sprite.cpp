@@ -14,6 +14,7 @@ Sprite::Sprite(Mesh* mesh, float width, float height)
     this->width = width;
     this->height = height;
     this->texture = nullptr;
+    this->yuvTexture = nullptr;
     parent = nullptr;
 
     orbitEnable = false;
@@ -106,6 +107,21 @@ void Sprite::setParent(Sprite* parent)
 {
     this->parent = parent;
 }
+
+
+
+void Sprite::setYUVTexture(YUVTexture* texture)
+{
+    yuvTexture = texture;
+}
+
+
+
+YUVTexture* Sprite::getYUVTexture()
+{
+    return yuvTexture;
+}
+
 
 
 Matrix4 Sprite::getModelMatrix()

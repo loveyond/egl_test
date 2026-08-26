@@ -221,17 +221,29 @@ int main()
     texture.create(imageFrame.w,imageFrame.h,imageFrame.img);
     stbi_image_free(imageFrame.img);
 
-// 创建sprite
-    Sprite photo1(&quad, 320, 200);
+    YUVTexture cameraTexture;
 
-    photo1.setPosition(1024/2,600/2);
+// 创建sprite
+    Sprite camera1(&quad, 320, 200);
+
+    camera1.setPosition(1024/2,600/2);
+    camera1.setMoveSpeed(0);
+    camera1.setScaleSpeed(0);
+    camera1.setRotateSpeed(0);
+//    photo1.setTexture(&texture);
+    camera1.setYUVTexture(&cameraTexture);
+
+    Sprite photo1(&quad, 200, 200);
+
+    photo1.setPosition(100,100);
     photo1.setMoveSpeed(0);
     photo1.setScaleSpeed(0);
     photo1.setRotateSpeed(0);
     photo1.setTexture(&texture);
-    
+
+
     Sprite circle1(&circle, 0.1, 0.1);  // 设置父子关系后的坐标已经不是坐标了,目前只用于测试,现阶段懒得改了. 0.1*0.1==(0.1*200)*(0.1*200)像素
-    circle1.setParent(&photo1);         // 设置父子关系
+    circle1.setParent(&camera1);         // 设置父子关系
     circle1.setPosition(0.7,0);         // 这里的位置坐标是相对于photo1的坐标: 0.7*0==(0.7*200)*0像素
 //    circle1.setPosition(500,300);
     circle1.setScaleSpeed(0);
@@ -250,14 +262,14 @@ int main()
         
         photo1.update();                      // 更新Sprite
         circle1.update();
+        camera1.update();
 
         if(cameraEngine.capture(frame)) {
-            gl_renderer.draw(photo1, &frame);
+            camera1.getYUVTexture()->update(frame);
         }
-        else {
-            gl_renderer.draw(photo1);
-        }
+        gl_renderer.draw(photo1);
         gl_renderer.draw(circle1);
+        gl_renderer.draw(camera1);
         
         egl.swap();                         // 显示
 

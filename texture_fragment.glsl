@@ -25,8 +25,13 @@ uniform sampler2D texture0;
 */
 uniform vec4 color;
 
-// 使用纹理的开关
-uniform int useTexture;
+// 使用纹理 0 = 纯颜色    1 = RGB 2 = YUV
+uniform int renderMode;
+
+uniform sampler2D texY;
+uniform sampler2D texU;
+uniform sampler2D texV;
+
 
 in vec2 uv;
 
@@ -68,10 +73,26 @@ void main()
         这个 Fragment 最终显示这个颜色
 
     */
-    if(useTexture == 1)
-        fragColor = texture(texture0, uv);
-    else
+    if(renderMode == 0)
+    {
         fragColor = color;
+    }
+    else if(renderMode == 1)
+    {
+        fragColor = texture(texture0, uv);
+    }
+    else if(renderMode == 2)
+    {
+        float Y = texture(texY, uv).r;
+        float U = texture(texU, uv).r - 0.5;
+        float V = texture(texV, uv).r - 0.5;
+    
+        float R = Y + 1.402 * V;
+        float G = Y - 0.344 * U - 0.714 * V;
+        float B = Y + 1.772 * U;
+    
+        fragColor = vec4(R, G, B, 1.0);
+    }
 
 }
 

@@ -401,7 +401,15 @@ bool CameraV4L2::getFrame(Frame& frame)//std::vector<unsigned char>& rgb, int& w
                 //continue;
             }
             
-            if (readFrame(frame))
+//            auto t1 = std::chrono::steady_clock::now();
+            
+            bool ret = readFrame(frame);
+            
+//            auto t2 = std::chrono::steady_clock::now();    
+//            printf("readFrame: %lld ms\n",
+//                   std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count());
+            
+            if (ret)
                 break;
             else
                 return false;
@@ -472,23 +480,31 @@ bool CameraV4L2::readFrame(Frame& frame)//std::vector<unsigned char>& rgb, int& 
     unsigned char* u = static_cast<unsigned char*>( buffers[buf.index].start[1] );
     unsigned char* v = static_cast<unsigned char*>( buffers[buf.index].start[2] );
 
-//    static std::vector<unsigned char> rgb(width * height * 3);
-    if (frame.rgb.size() != width * height * 3)
-        frame.rgb.resize(width * height * 3);
+//    if (frame.rgb.size() != width * height * 3)
+//        frame.rgb.resize(width * height * 3);
 
-//    auto t1 = std::chrono::steady_clock::now();
     
-    ImageConverter::YUV420ToRGB(
-        y, u, v,
-        width, height,
-        frame.rgb.data()
-        );
+//    ImageConverter::YUV420ToRGB(
+//        y, u, v,
+//        width, height,
+//        frame.rgb.data()
+//        );
+    if(frame.y.size() != width * height)
+        frame.y.resize(width * height);
+    
+    if(frame.u.size() != width / 2 * height / 2)
+        frame.u.resize(width / 2 * height / 2);
+    
+    if(frame.v.size() != width / 2 * height / 2)
+        frame.v.resize(width / 2 * height / 2);
+    
+    memcpy(frame.y.data(), y, width * height);
+    memcpy(frame.u.data(), u, width / 2 * height / 2);
+    memcpy(frame.v.data(), v, width / 2 * height / 2);
+
     frame.width = width;
     frame.height = height;
     
-//    auto t2 = std::chrono::steady_clock::now();    
-//    printf("YUV420ToRGB: %lld ms\n",
-//           std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count());
 
     /* 把刚刚用完的 buffer 重新交还给驱动，让它继续装下一帧数据 */
 	if (-1 == ioctl(fd, VIDIOC_QBUF, &buf)) {

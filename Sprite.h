@@ -4,6 +4,7 @@
 #include "Matrix4.h"
 #include "Mesh.h"
 #include "Texture.h"
+#include "YUVTexture.h"
 
 /*
           应用层
@@ -72,6 +73,10 @@ public:
     void setUseTexture(bool useTexture);
     void setTexture(Texture* texture);
 
+    void setYUVTexture(YUVTexture* texture);
+    
+    YUVTexture* getYUVTexture();
+
     Texture* getTexture();
 
     const RenderState& getRenderState() const;
@@ -101,6 +106,8 @@ private:
     Mesh* mesh;
     RenderState renderState;
     Texture* texture;
+    
+    YUVTexture* yuvTexture;
 
     Sprite* parent;
 
