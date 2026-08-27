@@ -5,6 +5,7 @@
 #include "Mesh.h"
 #include "Texture.h"
 #include "YUVTexture.h"
+#include "CameraEngine.h"
 
 /*
           应用层
@@ -119,6 +120,8 @@ private:
 
 public:
     void update();
+
+    void updateCamera(CameraEngine& cameraEngine);
 
 
 };

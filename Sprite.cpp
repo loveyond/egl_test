@@ -192,3 +192,14 @@ void Sprite::update()
 }
 
 
+
+void Sprite::updateCamera(CameraEngine& cameraEngine)
+{
+    Frame frame;
+
+    if(cameraEngine.capture(frame))
+        yuvTexture->update(frame);
+}
+
+
+

@@ -188,20 +188,21 @@ int main()
 {
     signal(SIGINT, SIG_DFL);
 
-
-    Frame frame;
     FrameBuffer frameBuffer;
     CameraEngine cameraEngine(&frameBuffer);
     cameraEngine.init();
+
 
     EGLManager egl;
     egl.init(1024,600);
     printf("GL:%s\n", glGetString(GL_VERSION));
 
+
 // 下面是OpenGL渲染层(GLRenderer Mesh Sprite等)    
 // Renderer / Shader
     GLRenderer gl_renderer;
     gl_renderer.init();
+
 
 // Mesh / Texture
     // 创建GPU资源(VAO、VBO)
@@ -215,7 +216,6 @@ int main()
         
     // 把 CPU 里的 RGB 图片数据，创建成 GPU 里的 2D Texture
     Texture texture;
-//    texture.create(2,2,image);      // 创建一张 2×2 的 RGB 图片纹理. image --> GPU Texture
     ImageFrame imageFrame;
     jpg2rgb(imageFrame);
     texture.create(imageFrame.w,imageFrame.h,imageFrame.img);
@@ -223,34 +223,31 @@ int main()
 
     YUVTexture cameraTexture;
 
+
 // 创建sprite
     Sprite camera1(&quad, 320, 200);
-
     camera1.setPosition(1024/2,600/2);
-    camera1.setMoveSpeed(0);
+    camera1.setMoveSpeed(2);
     camera1.setScaleSpeed(0);
     camera1.setRotateSpeed(0);
-//    photo1.setTexture(&texture);
     camera1.setYUVTexture(&cameraTexture);
 
     Sprite photo1(&quad, 200, 200);
-
     photo1.setPosition(100,100);
     photo1.setMoveSpeed(0);
     photo1.setScaleSpeed(0);
-    photo1.setRotateSpeed(0);
+    photo1.setRotateSpeed(2);
     photo1.setTexture(&texture);
-
 
     Sprite circle1(&circle, 0.1, 0.1);  // 设置父子关系后的坐标已经不是坐标了,目前只用于测试,现阶段懒得改了. 0.1*0.1==(0.1*200)*(0.1*200)像素
     circle1.setParent(&camera1);         // 设置父子关系
     circle1.setPosition(0.7,0);         // 这里的位置坐标是相对于photo1的坐标: 0.7*0==(0.7*200)*0像素
-//    circle1.setPosition(500,300);
     circle1.setScaleSpeed(0);
     circle1.setRotateSpeed(0);
     circle1.setColor(1, 1, 0, 1);
     circle1.setMoveSpeed(0);
     circle1.setOrbit(0.7f, 0.02f);
+
 
 // MVP被封装进了renderer    
 
@@ -259,28 +256,22 @@ int main()
     
         gl_renderer.clear();                // 清屏
         gl_renderer.begin();                // 使用Shader
+
         
         photo1.update();                      // 更新Sprite
         circle1.update();
         camera1.update();
+        camera1.updateCamera(cameraEngine);
 
-        if(cameraEngine.capture(frame)) {
-            camera1.getYUVTexture()->update(frame);
-        }
+
         gl_renderer.draw(photo1);
         gl_renderer.draw(circle1);
         gl_renderer.draw(camera1);
+
         
         egl.swap();                         // 显示
 
-
-
-
     }
-
-
-
-
 
     return 0;
 }
